@@ -87,7 +87,7 @@ export function MonthCalendar() {
               isSelected
                 ? "border-primary bg-primary/5"
                 : isToday
-                ? "border-primary bg-primary/5"
+                ? "border-blue-500 bg-primary/5" /* Changed from border-primary to border-blue-500 */
                 : "border-gray-300"
             } ${!isCurrentMonth ? "different-month" : ""}`}
           >

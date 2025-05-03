@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TaskProvider } from "@/contexts/TaskContext";
 import { TaskCalendar } from "@/components/TaskCalendar";
 import { TaskFilter } from "@/components/TaskFilter";
@@ -8,9 +8,19 @@ import { TaskFormDialog } from "@/components/TaskFormDialog";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { format } from "date-fns";
 
 const Index = () => {
   const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+  /* -------- update the clock every minute -------- */
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentDateTime(new Date()), 60_000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedTime = format(currentDateTime, "eee, MMM d, yyyy hh:mm a");
 
   return (
     <TaskProvider>
@@ -25,7 +35,11 @@ const Index = () => {
         {/* ---------- HEADER ---------- */}
         <header className="border-b bg-card/80 backdrop-blur-sm shadow-sm">
           <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-primary">Todo Calendar</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-primary">Todo Calendar</h1>
+              <span className="text-sm text-muted-foreground">{formattedTime}</span>
+            </div>
+
             <div className="flex items-center gap-4">
               <Button
                 onClick={() => setShowAddTaskDialog(true)}
