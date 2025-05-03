@@ -29,14 +29,17 @@ export function TaskViewDialog({ isOpen, onClose, task, onEdit }: TaskViewDialog
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+    <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <div className="flex justify-between items-start">
+        <div className="flex items-start">
             <DialogTitle className="text-xl pr-6">{task.title}</DialogTitle>
+            {/* Move the badge further left */}
+            <div className="ml-0 mr-4">
             <Badge className={getPriorityColor(task.priority)}>
-              {task.priority}
+                {task.priority}
             </Badge>
-          </div>
+            </div>
+        </div>
         </DialogHeader>
         
         <div className="space-y-4 pt-2">
