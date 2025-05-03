@@ -6,9 +6,10 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Pen, Trash } from "lucide-react";
+import { Eye, Pen, Trash } from "lucide-react";
 import { format } from "date-fns";
 import { TaskFormDialog } from "./TaskFormDialog";
+import { TaskViewDialog } from "./TaskViewDialog";
 
 interface TaskItemProps {
   task: Task;
@@ -18,6 +19,7 @@ interface TaskItemProps {
 export function TaskItem({ task, compact = false }: TaskItemProps) {
   const { toggleTaskCompletion, deleteTask } = useTaskContext();
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showViewDialog, setShowViewDialog] = useState(false);
 
   const getPriorityColor = (priority: Task["priority"]) => {
     switch (priority) {
@@ -42,12 +44,34 @@ export function TaskItem({ task, compact = false }: TaskItemProps) {
         />
         <span 
           className={`text-sm flex-grow truncate ${task.completed ? "task-completed" : ""}`}
+          onClick={() => setShowViewDialog(true)}
         >
           {task.title}
         </span>
         <Badge className={`${getPriorityColor(task.priority)} text-[10px] px-1 py-0`}>
           {task.priority}
         </Badge>
+        
+        {showViewDialog && (
+          <TaskViewDialog 
+            isOpen={showViewDialog}
+            onClose={() => setShowViewDialog(false)}
+            task={task}
+            onEdit={() => {
+              setShowViewDialog(false);
+              setShowEditDialog(true);
+            }}
+          />
+        )}
+        
+        {showEditDialog && (
+          <TaskFormDialog 
+            isOpen={showEditDialog}
+            onClose={() => setShowEditDialog(false)}
+            task={task}
+            mode="edit"
+          />
+        )}
       </div>
     );
   }
@@ -94,6 +118,14 @@ export function TaskItem({ task, compact = false }: TaskItemProps) {
             <Button 
               size="sm" 
               variant="outline"
+              onClick={() => setShowViewDialog(true)}
+            >
+              <Eye className="h-4 w-4 mr-1" />
+              View
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline"
               onClick={() => setShowEditDialog(true)}
             >
               <Pen className="h-4 w-4 mr-1" />
@@ -110,6 +142,18 @@ export function TaskItem({ task, compact = false }: TaskItemProps) {
           </div>
         </CardFooter>
       </Card>
+      
+      {showViewDialog && (
+        <TaskViewDialog 
+          isOpen={showViewDialog}
+          onClose={() => setShowViewDialog(false)}
+          task={task}
+          onEdit={() => {
+            setShowViewDialog(false);
+            setShowEditDialog(true);
+          }}
+        />
+      )}
       
       {showEditDialog && (
         <TaskFormDialog 
