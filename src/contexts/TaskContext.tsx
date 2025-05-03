@@ -30,18 +30,61 @@ export const useTaskContext = () => {
   return context;
 };
 
+// Helper function to serialize and deserialize dates in tasks
+const serializeTasks = (tasks: Task[]): string => {
+  return JSON.stringify(tasks, (key, value) => {
+    if (key === 'date' && value instanceof Date) {
+      return { __type: 'Date', value: value.toISOString() };
+    }
+    return value;
+  });
+};
+
+const deserializeTasks = (tasksJson: string): Task[] => {
+  return JSON.parse(tasksJson, (key, value) => {
+    if (value && typeof value === 'object' && value.__type === 'Date') {
+      return new Date(value.value);
+    }
+    return value;
+  });
+};
+
 interface TaskProviderProps {
   children: ReactNode;
 }
 
+const STORAGE_KEY = 'todo_calendar_tasks';
+
 export const TaskProvider = ({ children }: TaskProviderProps) => {
   const [tasks, setTasks] = useState<Task[]>(() => {
-    // For now we'll use sample data, later this could be from localStorage or a backend
-    return generateSampleTasks();
+    // Try to load tasks from localStorage first
+    const savedTasks = localStorage.getItem(STORAGE_KEY);
+    if (savedTasks) {
+      try {
+        return deserializeTasks(savedTasks);
+      } catch (error) {
+        console.error('Failed to parse saved tasks:', error);
+        // Fallback to sample tasks if parsing fails
+        return generateSampleTasks();
+      }
+    } else {
+      // No saved tasks found, use sample data
+      return generateSampleTasks();
+    }
   });
+  
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentView, setCurrentView] = useState<'day' | 'week' | 'month'>('month');
   const [filter, setFilter] = useState<Filter>({});
+
+  // Save tasks to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, serializeTasks(tasks));
+    } catch (error) {
+      console.error('Failed to save tasks to localStorage:', error);
+    }
+  }, [tasks]);
 
   const addTask = (task: Omit<Task, "id">) => {
     const newTask = { ...task, id: createId() };

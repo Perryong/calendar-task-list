@@ -1,10 +1,10 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- THEME TOKENS ---------- */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -105,6 +105,7 @@
   }
 }
 
+/* ---------- GLOBAL ELEMENT RESETS ---------- */
 @layer base {
   * {
     @apply border-border;
@@ -114,8 +115,27 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  /* ===== GOKU FULL‑SCREEN BACKGROUND ===== */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: url("/goku.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    filter: brightness(0.85);          /* keep foreground legible */
+  }
+
+  .dark body::before {
+    filter: brightness(0.4);           /* darker in dark‑mode    */
+  }
 }
 
+/* ---------- COMPONENT UTILITIES ---------- */
 .task-completed {
   @apply relative text-muted-foreground transition-colors;
 }
@@ -126,15 +146,19 @@
 }
 
 .calendar-day {
-  @apply min-h-[100px] p-1 border border-border hover:bg-muted/20 transition-colors;
+  @apply min-h-[100px] p-1 border-2 border-gray-400 hover:bg-muted/20 transition-colors;
 }
 
 .calendar-day.today {
-  @apply bg-primary/5 border-primary;
+  @apply bg-primary/5 border-gray-400 border-2;
 }
 
 .calendar-day.different-month {
-  @apply bg-muted/20 text-muted-foreground;
+  @apply bg-muted/20 text-muted-foreground border-2 border-gray-400;
+}
+
+.calendar-week {
+  @apply border-2 border-gray-300 bg-muted/40 text-sm font-medium text-foreground;
 }
 
 @media (max-width: 640px) {
