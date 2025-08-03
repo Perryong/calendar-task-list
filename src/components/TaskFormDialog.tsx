@@ -48,6 +48,8 @@ export function TaskFormDialog({ isOpen, onClose, task, mode }: TaskFormDialogPr
       priority: formData.priority,
       completed: task?.completed || false,
       labels: formData.labels ? formData.labels.split(",").map(l => l.trim()).filter(Boolean) : undefined,
+      status: task?.status || "todo",
+      urgency: task?.urgency || "medium",
     };
     
     if (mode === "add") {
