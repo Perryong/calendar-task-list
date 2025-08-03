@@ -128,36 +128,84 @@ export function GanttView() {
         </div>
       </div>
 
-      {/* Mobile Gantt - List View with Progress */}
-      <div className="md:hidden space-y-3">
+      {/* Mobile Gantt - Enhanced Timeline View */}
+      <div className="md:hidden">
         {ganttTasks.length > 0 ? (
-          ganttTasks.map((task) => {
-            const progress = taskUtils.calculateProgress(task);
-            const duration = taskUtils.getTaskDuration(task);
-            
-            return (
-              <div key={task.id} className="bg-card border rounded-lg p-3">
-                <TaskCard task={task} mode="default" />
-                
-                <div className="mt-3 space-y-2">
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Progress</span>
-                    <span>{progress}%</span>
-                  </div>
-                  <Progress value={progress} className="h-2" />
-                  
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Duration: {duration} minutes</span>
-                    <span>Due: {format(task.date, "MMM d")}</span>
-                  </div>
+          <div className="space-y-4">
+            {/* Mobile Timeline Header */}
+            <div className="bg-card border rounded-lg p-3">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-sm">Timeline</h3>
+                <div className="text-xs text-muted-foreground">
+                  {format(ganttStart, "MMM d")} - {format(ganttEnd, "MMM d")}
                 </div>
               </div>
-            );
-          })
+              
+              {/* Mini timeline indicator */}
+              <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+                <div className="absolute left-0 top-0 h-full w-1 bg-primary rounded-full"></div>
+                <div className="absolute right-0 top-0 h-full w-1 bg-primary rounded-full"></div>
+              </div>
+            </div>
+
+            {/* Mobile Task Cards with Timeline Info */}
+            {ganttTasks.map((task) => {
+              const progress = taskUtils.calculateProgress(task);
+              const duration = taskUtils.getTaskDuration(task);
+              const daysFromStart = differenceInDays(task.date, ganttStart);
+              const timelinePercent = (daysFromStart / totalDays) * 100;
+              
+              return (
+                <div key={task.id} className="bg-card border rounded-lg p-3 touch-manipulation">
+                  <TaskCard task={task} mode="default" />
+                  
+                  <div className="mt-3 space-y-3">
+                    {/* Timeline Position */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Timeline Position</span>
+                        <span>Day {daysFromStart + 1} of {totalDays}</span>
+                      </div>
+                      <div className="relative h-2 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="absolute top-0 h-full w-3 bg-primary rounded-full transition-all duration-300"
+                          style={{ left: `${Math.max(0, Math.min(timelinePercent, 97))}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Progress */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Progress</span>
+                        <span>{progress}%</span>
+                      </div>
+                      <Progress value={progress} className="h-2" />
+                    </div>
+                    
+                    {/* Task Details */}
+                    <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                      <div className="bg-muted/50 rounded p-2">
+                        <div className="font-medium">Duration</div>
+                        <div>{Math.round(duration / 60)}h {duration % 60}m</div>
+                      </div>
+                      <div className="bg-muted/50 rounded p-2">
+                        <div className="font-medium">Due Date</div>
+                        <div>{format(task.date, "MMM d, EEE")}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         ) : (
-          <div className="bg-card border rounded-lg p-8 text-center text-muted-foreground">
-            <p>No tasks in the selected time range</p>
-            <p className="text-sm mt-1">Select a different time period or add tasks</p>
+          <div className="bg-card border rounded-lg p-6 text-center text-muted-foreground">
+            <div className="w-12 h-12 mx-auto mb-3 bg-muted rounded-full flex items-center justify-center">
+              <div className="w-6 h-1 bg-muted-foreground/30 rounded"></div>
+            </div>
+            <p className="font-medium">No tasks in timeline</p>
+            <p className="text-xs mt-1">Select a different time period or add tasks</p>
           </div>
         )}
       </div>

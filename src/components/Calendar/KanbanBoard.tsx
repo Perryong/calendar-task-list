@@ -11,30 +11,30 @@ const statusConfig = {
   todo: {
     title: "To Do",
     icon: AlertCircle,
-    className: "border-orange-200 bg-orange-50/30 dark:border-orange-800 dark:bg-orange-950/20"
+    className: "border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-950"
   },
   in_progress: {
     title: "In Progress", 
     icon: Play,
-    className: "border-blue-200 bg-blue-50/30 dark:border-blue-800 dark:bg-blue-950/20"
+    className: "border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950"
   },
   done: {
     title: "Done",
     icon: CheckCircle2,
-    className: "border-green-200 bg-green-50/30 dark:border-green-800 dark:bg-green-950/20"
+    className: "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950"
   }
 };
 
 const priorityColors = {
-  low: "bg-green-100/60 text-green-800 dark:bg-green-900/40 dark:text-green-300",
-  medium: "bg-yellow-100/60 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300", 
-  high: "bg-red-100/60 text-red-800 dark:bg-red-900/40 dark:text-red-300"
+  low: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+  medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300", 
+  high: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
 };
 
 const urgencyColors = {
-  low: "bg-blue-100/60 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
-  medium: "bg-purple-100/60 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300",
-  high: "bg-pink-100/60 text-pink-800 dark:bg-pink-900/40 dark:text-pink-300"
+  low: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+  medium: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+  high: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300"
 };
 
 interface KanbanCardProps {
@@ -60,7 +60,7 @@ function KanbanCard({ task, onStatusChange, onStartTimer, onStopTimer, isTimerRu
   };
 
   return (
-    <Card className="mb-2 sm:mb-3 cursor-pointer hover:shadow-md transition-shadow bg-white/30 dark:bg-gray-900/20 backdrop-blur-sm border border-white/20 dark:border-gray-800/20 !bg-transparent">
+    <Card className="mb-2 sm:mb-3 cursor-pointer hover:shadow-md transition-shadow">
       <CardHeader className="pb-2 p-3 sm:p-6">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-xs sm:text-sm font-medium leading-tight flex-1 min-w-0">
@@ -96,7 +96,7 @@ function KanbanCard({ task, onStatusChange, onStartTimer, onStopTimer, isTimerRu
         {task.labels && task.labels.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
             {task.labels.map((label, index) => (
-              <Badge key={index} variant="secondary" className="text-[10px] sm:text-xs backdrop-blur-sm bg-secondary/30">
+              <Badge key={index} variant="secondary" className="text-[10px] sm:text-xs">
                 {label}
               </Badge>
             ))}
@@ -167,27 +167,36 @@ function KanbanColumn({ status, tasks, onStatusChange, onStartTimer, onStopTimer
   const Icon = config.icon;
 
   return (
-    <div className="flex-1 min-w-0 min-w-[280px] max-w-full">
-      <div className={cn("rounded-lg border-2 border-dashed p-2 sm:p-4 min-h-[400px] sm:min-h-[600px] backdrop-blur-sm shadow-sm", config.className)}>
+    <div className="flex-1 min-w-0 min-w-[280px] sm:min-w-[320px] max-w-full">
+      <div className={cn("rounded-lg border-2 border-dashed p-3 sm:p-4 min-h-[400px] sm:min-h-[600px] touch-manipulation", config.className)}>
         <div className="flex items-center gap-2 mb-4">
           <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-          <h3 className="font-semibold text-sm sm:text-base">{config.title}</h3>
-          <Badge variant="secondary" className="ml-auto text-xs backdrop-blur-sm">
+          <h3 className="font-semibold text-sm sm:text-base truncate">{config.title}</h3>
+          <Badge variant="secondary" className="ml-auto text-xs flex-shrink-0">
             {tasks.length}
           </Badge>
         </div>
         
-        <div className="space-y-2">
-          {tasks.map((task) => (
-            <KanbanCard
-              key={task.id}
-              task={task}
-              onStatusChange={onStatusChange}
-              onStartTimer={onStartTimer}
-              onStopTimer={onStopTimer}
-              isTimerRunning={runningTimers.has(task.id)}
-            />
-          ))}
+        <div className="space-y-2 max-h-[calc(100%-60px)] overflow-y-auto">
+          {tasks.length > 0 ? (
+            tasks.map((task) => (
+              <KanbanCard
+                key={task.id}
+                task={task}
+                onStatusChange={onStatusChange}
+                onStartTimer={onStartTimer}
+                onStopTimer={onStopTimer}
+                isTimerRunning={runningTimers.has(task.id)}
+              />
+            ))
+          ) : (
+            <div className="flex items-center justify-center h-32 text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm">No tasks</p>
+                <p className="text-xs mt-1">Add tasks to get started</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -234,8 +243,27 @@ export function KanbanBoard() {
   };
 
   return (
-    <div className="w-full p-2 sm:p-4 bg-transparent">
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 overflow-x-auto pb-4">
+    <div className="w-full p-2 sm:p-4">
+      {/* Mobile: Horizontal scroll with snap */}
+      <div className="sm:hidden">
+        <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth">
+          {(Object.keys(statusConfig) as TaskStatus[]).map((status) => (
+            <div key={status} className="flex-none w-80 snap-start">
+              <KanbanColumn
+                status={status}
+                tasks={tasksByStatus[status]}
+                onStatusChange={handleStatusChange}
+                onStartTimer={handleStartTimer}
+                onStopTimer={handleStopTimer}
+                runningTimers={runningTimers}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop: Flex layout */}
+      <div className="hidden sm:flex gap-6 overflow-x-auto pb-4">
         {(Object.keys(statusConfig) as TaskStatus[]).map((status) => (
           <KanbanColumn
             key={status}
