@@ -14,13 +14,58 @@ export const generateSampleTasks = (): Task[] => {
   return [
     {
       id: createId(),
+      title: "Complete project proposal",
+      description: "Finalize the project proposal document",
+      date: today,
+      completed: false,
+      priority: "high",
+      labels: ["work", "urgent"],
+      status: "todo",
+      urgency: "high",
+    },
+    {
+      id: createId(),
+      title: "Schedule team meeting",
+      description: "Set up weekly sync for project status updates",
+      date: tomorrow,
+      completed: false,
+      priority: "medium",
+      labels: ["work"],
+      status: "in_progress",
+      urgency: "medium",
+    },
+    {
+      id: createId(),
+      title: "Grocery shopping",
+      description: "Buy fruits, vegetables, and milk",
+      date: yesterday,
+      completed: true,
+      priority: "low",
+      labels: ["personal"],
+      status: "done",
+      urgency: "low",
+    },
+    {
+      id: createId(),
       title: "Morning workout",
       description: "30-minute cardio session",
       date: today,
       completed: true,
       priority: "medium",
-      labels: ["health"]
+      labels: ["health"],
+      status: "done",
+      urgency: "medium",
     },
-
+    {
+      id: createId(),
+      title: "Call mom",
+      description: "Check in and catch up",
+      date: tomorrow,
+      completed: false,
+      priority: "medium",
+      labels: ["personal"],
+      status: "todo",
+      urgency: "medium",
+    }
   ];
 };

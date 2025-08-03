@@ -113,6 +113,11 @@ export default {
 				"fade-in": "fade-in 0.2s ease-out",
 				"fade-out": "fade-out 0.2s ease-out",
 			},
+			gridTemplateColumns: {
+				"13": "repeat(13, minmax(0, 1fr))",
+				"14": "repeat(14, minmax(0, 1fr))",
+				"28": "repeat(28, minmax(0, 1fr))",
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],

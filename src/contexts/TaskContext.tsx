@@ -1,6 +1,5 @@
-
 import { createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { Task, Filter } from "@/lib/types";
+import { Task, Filter, CalendarViewType } from "@/lib/types";
 import { generateSampleTasks } from "@/lib/data";
 import { isSameDay } from "date-fns";
 import { toast } from "sonner";
@@ -11,8 +10,8 @@ interface TaskContextType {
   tasks: Task[];
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
-  currentView: 'day' | 'week' | 'month';
-  setCurrentView: (view: 'day' | 'week' | 'month') => void;
+  currentView: CalendarViewType;
+  setCurrentView: (view: CalendarViewType) => void;
   filter: Filter;
   setFilter: (filter: Filter) => void;
   addTask: (task: Omit<Task, "id">) => void;
@@ -62,7 +61,13 @@ const dbTaskToTask = (dbTask: any): Task => {
     date: new Date(dbTask.date),
     completed: dbTask.completed,
     priority: dbTask.priority,
-    labels: dbTask.labels || []
+    labels: dbTask.labels || [],
+    status: dbTask.status || 'todo',
+    urgency: dbTask.urgency || 'medium',
+    estimated_duration: dbTask.estimated_duration,
+    actual_duration: dbTask.actual_duration,
+    started_at: dbTask.started_at ? new Date(dbTask.started_at) : undefined,
+    completed_at: dbTask.completed_at ? new Date(dbTask.completed_at) : undefined
   };
 };
 
@@ -75,7 +80,13 @@ const taskToDbTask = (task: Task) => {
     date: task.date.toISOString(),
     completed: task.completed,
     priority: task.priority,
-    labels: task.labels || []
+    labels: task.labels || [],
+    status: task.status,
+    urgency: task.urgency,
+    estimated_duration: task.estimated_duration,
+    actual_duration: task.actual_duration,
+    started_at: task.started_at?.toISOString(),
+    completed_at: task.completed_at?.toISOString()
   };
 };
 
@@ -89,7 +100,7 @@ const CACHE_TIMESTAMP_KEY = 'todo_calendar_cache_timestamp';
 export const TaskProvider = ({ children }: TaskProviderProps) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [currentView, setCurrentView] = useState<'day' | 'week' | 'month'>('month');
+  const [currentView, setCurrentView] = useState<CalendarViewType>('month');
   const [filter, setFilter] = useState<Filter>({});
   const [isLoading, setIsLoading] = useState(true);
   const [syncStatus, setSyncStatus] = useState<'synced' | 'syncing' | 'error'>('syncing');

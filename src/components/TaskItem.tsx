@@ -61,6 +61,10 @@ export function TaskItem({ task, compact = false }: TaskItemProps) {
               setShowViewDialog(false);
               setShowEditDialog(true);
             }}
+            onDelete={() => {
+              setShowViewDialog(false);
+              deleteTask(task.id);
+            }}
           />
         )}
         
@@ -151,6 +155,10 @@ export function TaskItem({ task, compact = false }: TaskItemProps) {
           onEdit={() => {
             setShowViewDialog(false);
             setShowEditDialog(true);
+          }}
+          onDelete={() => {
+            setShowViewDialog(false);
+            deleteTask(task.id);
           }}
         />
       )}

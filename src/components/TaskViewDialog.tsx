@@ -4,16 +4,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { Pen, Check, Calendar } from "lucide-react";
+import { Pen, Check, Calendar, Trash2 } from "lucide-react";
 
 interface TaskViewDialogProps {
   isOpen: boolean;
   onClose: () => void;
   task: Task;
   onEdit: () => void;
+  onDelete: () => void;
 }
 
-export function TaskViewDialog({ isOpen, onClose, task, onEdit }: TaskViewDialogProps) {
+export function TaskViewDialog({ isOpen, onClose, task, onEdit, onDelete }: TaskViewDialogProps) {
   const getPriorityColor = (priority: Task["priority"]) => {
     switch (priority) {
       case "high":
@@ -29,44 +30,46 @@ export function TaskViewDialog({ isOpen, onClose, task, onEdit }: TaskViewDialog
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-    <DialogContent className="sm:max-w-[500px]">
+      <DialogContent>
         <DialogHeader>
-        <div className="flex items-start">
-            <DialogTitle className="text-xl pr-6">{task.title}</DialogTitle>
-            {/* Move the badge further left */}
-            <div className="ml-0 mr-4">
+          <div className="flex items-center justify-between w-full">
+            {/* Left side: Badge */}
             <Badge className={getPriorityColor(task.priority)}>
-                {task.priority}
+              {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
             </Badge>
-            </div>
-        </div>
+
+            {/* Title in center */}
+            <DialogTitle className="text-center flex-1">
+              {task.title}
+            </DialogTitle>
+          </div>
         </DialogHeader>
         
-        <div className="space-y-4 pt-2">
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4 mr-2" />
-            <span>{format(task.date, "PPP")}</span>
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
+            <span>{format(task.date, "PPPP")}</span>
             {task.completed && (
-              <Badge className="ml-2 bg-primary text-primary-foreground">
-                <Check className="h-3 w-3 mr-1" />
+              <Badge className="ml-auto">
+                <Check className="h-4 w-4 mr-1" />
                 Completed
               </Badge>
             )}
           </div>
           
           {task.description && (
-            <div className="space-y-1">
-              <h3 className="text-sm font-medium">Description</h3>
-              <p className="text-sm">{task.description}</p>
+            <div>
+              <h3 className="font-semibold mb-2">Description</h3>
+              <p className="text-sm text-muted-foreground">{task.description}</p>
             </div>
           )}
           
           {task.labels && task.labels.length > 0 && (
-            <div className="space-y-1">
-              <h3 className="text-sm font-medium">Labels</h3>
-              <div className="flex flex-wrap gap-1">
+            <div>
+              <h3 className="font-semibold mb-2">Labels</h3>
+              <div className="flex flex-wrap gap-2">
                 {task.labels.map(label => (
-                  <Badge key={label} variant="outline" className="text-xs">
+                  <Badge key={label} variant="secondary">
                     {label}
                   </Badge>
                 ))}
@@ -75,11 +78,15 @@ export function TaskViewDialog({ isOpen, onClose, task, onEdit }: TaskViewDialog
           )}
         </div>
         
-        <DialogFooter>
-          <Button type="button" variant="outline" onClick={onClose}>
+        <DialogFooter className="gap-3 pt-8">
+          <Button type="button" variant="outline" onClick={onClose} className="px-6">
             Close
           </Button>
-          <Button type="button" onClick={onEdit}>
+          <Button type="button" variant="destructive" onClick={onDelete} className="px-6">
+            <Trash2 className="h-4 w-4 mr-2" />
+            Delete
+          </Button>
+          <Button type="button" onClick={onEdit} className="px-6">
             <Pen className="h-4 w-4 mr-2" />
             Edit Task
           </Button>
