@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode, useState, useEffect } from "react";
 import { Task, Filter, CalendarViewType } from "@/lib/types";
 import { generateSampleTasks } from "@/lib/data";
@@ -252,9 +253,12 @@ export const TaskProvider = ({ children }: TaskProviderProps) => {
     const taskToToggle = tasks.find(task => task.id === id);
     if (!taskToToggle) return;
     
-    const updatedTask = { 
+    const isCompleting = !taskToToggle.completed;
+    const updatedTask: Task = { 
       ...taskToToggle, 
-      completed: !taskToToggle.completed 
+      completed: isCompleting,
+      status: isCompleting ? 'done' : 'todo',
+      completed_at: isCompleting ? new Date() : undefined
     };
     
     // Update local state immediately
