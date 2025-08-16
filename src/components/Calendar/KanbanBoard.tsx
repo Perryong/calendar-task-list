@@ -236,10 +236,13 @@ export function KanbanBoard() {
     // TODO: Implement actual time tracking
   };
 
+  // Filter out all completed tasks from Kanban board
+  const incompleteTasks = tasks.filter(task => !task.completed);
+  
   const tasksByStatus = {
-    todo: tasks.filter(task => task.status === 'todo'),
-    in_progress: tasks.filter(task => task.status === 'in_progress'),
-    done: tasks.filter(task => task.status === 'done')
+    todo: incompleteTasks.filter(task => task.status === 'todo'),
+    in_progress: incompleteTasks.filter(task => task.status === 'in_progress'),
+    done: incompleteTasks.filter(task => task.status === 'done')
   };
 
   return (
