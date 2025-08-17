@@ -19,9 +19,10 @@ interface TaskFormDialogProps {
   onClose: () => void;
   task?: Task;
   mode: "add" | "edit";
+  defaultDate?: Date;
 }
 
-export function TaskFormDialog({ isOpen, onClose, task, mode }: TaskFormDialogProps) {
+export function TaskFormDialog({ isOpen, onClose, task, mode, defaultDate }: TaskFormDialogProps) {
   const { addTask, updateTask } = useTaskContext();
   
   const [formData, setFormData] = useState<{
@@ -33,7 +34,7 @@ export function TaskFormDialog({ isOpen, onClose, task, mode }: TaskFormDialogPr
   }>({
     title: task?.title || "",
     description: task?.description || "",
-    date: task?.date || new Date(),
+    date: task?.date || defaultDate || new Date(),
     priority: task?.priority || "medium",
     labels: task?.labels?.join(", ") || "",
   });
